@@ -1,0 +1,2 @@
+Expectation value of Exp(-x): 0.6319907066912871
+Expectation value of x if x^2 > 1/4, 1/2 otherwise: 0.6250188270591344
