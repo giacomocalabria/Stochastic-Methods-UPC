@@ -7,7 +7,7 @@ __pycache__/
 *.so
 
 .url
-.wav
+*.wav
 
 # Distribution / packaging
 .Python
