@@ -55,7 +55,7 @@
 \section*{Introduction}
 In this first module we consider the problem of throwing dice multiple times and using and calculating the resulting probability distribution. In this scenario, $N_{dice}$ dice are thrown $N_{iter}$ times.
 \section{Figure 1}
-We starty by generating $N_{iter}$ random numbers and use them for the calculation of the probability distribution.\\\\
+We start by generating $N_{iter}$ random numbers and use them for the calculation of the probability distribution.\\\\
 The random variable of interest is
 \begin{equation}
     x=\text{rand}(6)
@@ -132,10 +132,10 @@ plt.plot(x, gaussian, label='Gaussian distribution',color='red', linestyle='--')
     \caption{Distribution of the average value of multiple dice roll}
     \label{fig:3}
 \end{figure}
-As we can see as we use a large number of dice the resulting distribution is pretty similar to the Gaussian distribution expected by the Central Limit Theorem
+As observed, with an increasing number of dice used, the resultant distribution closely resembles the Gaussian distribution expected by the Central Limit Theorem. 
 \clearpage
 \section{Error estimation}
-We wanna now calculate the average value and estimate the statistical error, associated with such estimation. Assume that single-die throwing is used to estimate the mean value and the variance
+Now, we aim to compute the average value and estimate the associated statistical error, with such estimation. We'll employ single-die throwing to estimate both the mean value and the variance
 \begin{equation}
     \mu=\langle x\rangle\approx\frac{\sum_{i=1}^{N_{iter}}{x_i}}{N_{iter}}
 \end{equation}
@@ -159,7 +159,7 @@ then we estimate the statistical error using
 \begin{equation}
     \varepsilon=\frac\sigma{\sqrt{N_{iter}}}
 \end{equation}
-where the variance is the estimation of the statistical error. We obatin the results, which are reported in \autoref{tab:1}
+where the variance is the estimation of the statistical error. We obtain the results, which are reported in \autoref{tab:1}
 \begin{table}[H]
     \centering
     \begin{tabular}{|l|c|c|c|c|}
@@ -171,5 +171,5 @@ where the variance is the estimation of the statistical error. We obatin the res
     \caption{Results of error estimation}
     \label{tab:1}
 \end{table}
-\noindent As we expected as the number of samples increases, the statistical error decreases and the mean value and the variance tends to the exact value. The acual error is not similar to the estimation of the statistical error.
+\noindent As expected, as the number of samples increases, the statistical error decreases and the mean value and the variance tends to the exact value. The actual error is not similar to the estimation of the statistical error.
 \end{document}
