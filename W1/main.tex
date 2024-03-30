@@ -55,8 +55,7 @@
 \section*{Introduction}
 In this first module we consider the problem of throwing dice multiple times and using and calculating the resulting probability distribution. In this scenario, $N_{dice}$ dice are thrown $N_{iter}$ times.
 \section{Figure 1}
-We start by generating $N_{iter}$ random numbers and use them for the calculation of the probability distribution.\\\\
-The random variable of interest is
+We start by generating $N_{iter}$ random numbers and use them for the calculation of the probability distribution. The random variable of interest is
 \begin{equation}
     x=\text{rand}(6)
 \end{equation}
@@ -171,5 +170,5 @@ where the variance is the estimation of the statistical error. We obtain the res
     \caption{Results of error estimation}
     \label{tab:1}
 \end{table}
-\noindent As expected, as the number of samples increases, the statistical error decreases and the mean value and the variance tends to the exact value. The actual error is not similar to the estimation of the statistical error.
+\noindent As expected, with an increasing number of samples, the statistical error decreases and the mean value and the variance tends to the exact value. However, it's noteworthy that the actual error may not closely align with the estimation of the statistical error.
 \end{document}
