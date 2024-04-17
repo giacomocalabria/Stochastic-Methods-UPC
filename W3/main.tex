@@ -67,6 +67,10 @@ where we defined the theta function as
 \section{Area of a circle in 2D}
 Consider a circle of unit radius, $R=1$, in two dimensions. Generate $N_{iter}$ random numbers using uniform random distribution. Then calculate the probability that point $(x,y)$ lies inside of the circle and use it to approximate the area of the circle $S$ and compare it to the exact results: $S_{extact}=\pi R^2$.\\
 Report the statistical error $\sigma/\sqrt{N_{iter}}$ and compare it with the actual error, then make a log-log plot showing the statistical error and the actual error $|S-S_{exact}|$ as a function of the number of iterations.\\\\
+The area is estimated by calculating the fraction of points that fall within the circle and then multiplying it by the area of the square that bounds the circle.
+\begin{equation}
+    S\approx\frac{\text{Points inside the circle}}{\text{Total number of points}}\times(2R)^2
+\end{equation}
 We use the following code 
 \begin{lstlisting}[language=Python]
 Niter = 1000
@@ -75,7 +79,17 @@ Nhint = 0
 for i in range(Niter):
     if x[i,0]**2 + x[i,1]**2 < R**2:
         Nhint += 1
-S = 4*R**2*Nhint/Niter
+
+S = (2*R)**2*Nhint/Niter
+errStat = np.sqrt((S-np.pi*R**2)**2/Niter**2)
+errAct = np.abs(S-np.pi*R**2)
+\end{lstlisting}
+\begin{lstlisting}
+Using N: 1000 and D: 2
+Estimated area of the unit circle: 3.048
+Exact area of the unit circle: 3.141592653589793
+Actual error: 0.09359265358979307
+Statistical error: 9.359265358979307e-05
 \end{lstlisting}
 \begin{figure}[H]
     \centering
@@ -93,91 +107,117 @@ S = 4*R**2*Nhint/Niter
     \centering
     \includegraphics[width=.7\linewidth]{images/Figure1.1.png}
     \caption{log-log plot of the actual error}
-    \label{fig:1}
+    \label{fig:121}
 \end{figure}
+As we can see, it is confirmed that both statistical error and acutal error decrease as the number of iterations increases.
 \clearpage
 \section{Volume of a spere in 3D}
-Consider a sphere of unit radius, $R=1$, in two dimensions. Generate $N_{iter}$ random numbers using uniform random distribution. Then calculate the probability that point $(x,y,z)$ lies inside of the sphere and use it to approximate the volume of the sphere $V$ and compare it to the exact results: $V_{extact}=\frac43\pi R^3$.\\
+Consider a sphere of radius $R$, in three dimensions. We generate $N_{iter}$ random numbers using uniform random distribution, then we calculate the probability that point $(x,y,z)$ lies inside of the sphere and use it to approximate the volume of the sphere $V$ and compare it to the exact results: $V_{extact}=\frac43\pi R^3$.\\
 As before report the statistical error $\sigma/\sqrt{N_{iter}}$ and compare it with the actual error, then make a log-log plot showing the statistical error and the actual error $|S-S_{exact}|$ as a function of the number of iterations.
+\begin{equation}
+    V\approx\frac{\text{Points inside the sphere}}{\text{Total number of points}}\times(2R)^3
+\end{equation}
 \begin{lstlisting}[language=Python]
-Niter = 100000
+Niter = 1000
+p = 2*np.random.rand(Niter, 3)*R-R
+Nhint = 0
 for i in range(Niter):
-    a = random.randint(1, 6)
-    b = random.randint(1, 6)
-    dice_outcome[i] = (a + b) / 2
-bin_edges = np.arange(1, 7, 0.5)
-counts, _ = np.histogram(dice_outcome, bins=bin_edges)
-pdf = counts / Niter
-plt.bar(bin_edges[:-1], pdf, width=0.5)
+    if p[i,0]**2 + p[i,1]**2 + p[i,2]**2 < R**2:
+        Nhint += 1
+        
+V = (2*R)**3*Nhint/Niter
+errAct = np.abs(V-4/3*np.pi*R**3)
+errStat = np.sqrt((V-4/3*np.pi*R**3)**2/Niter**2)
+\end{lstlisting}
+\begin{lstlisting}
+Using N: 1000 and D: 7
+Estimated volume of the unit sphere: 4.256
+Exact volume of the unit sphere: 4.1887902047863905
+Actual error: 0.0672097952136097
+Statistical error: 6.72097952136097e-05
 \end{lstlisting}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.9\linewidth]{images/Figure2.png}
-    \caption{Distribution of the average value of two dice roll}
+    \includegraphics[width=.75\linewidth]{images/Figure2.png}
+    \caption{}
     \label{fig:2}
 \end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{images/Figure2.1.png}
+    \caption{log-log plot of the statistical error}
+    \label{fig:2.1}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{images/Figure2.2.png}
+    \caption{log-log plot of the actual error}
+    \label{fig:2.2}
+\end{figure}
 \clearpage
-\section{Volume of a sphere in $D$ dimensions}
-We now consider the follow random event: throwing a dice $N_{iter}$ times and calculating the average value.
+\section{Volume of a sphere in \textit{D} dimensions}
+Now, we extend the concept to higher dimensions $D$. Similar to the sphere, the volume is estimated by calculating the fraction of points that fall within the hypersphere and then multiplying it by the volume of the hypercube that bounds the hypersphere.
 \begin{equation}
-    x=\frac{\sum_{i=1}^{N_{iter}}{\text{rand}(6)}}{N_{iter}}
+    V\approx\frac{\text{Points inside hypersphere}}{\text{Total number of points}}\times(2R)^D
 \end{equation}
-With that random event $x$ we calculate the probability distribution $p(x)$. As we use large $N$ we can consider the random value $x$ as a continuous variable. And then we normalise the PDF as $\int{p(x)dx}=1$.
-With this code we generate calculate the probability distribution:
+and the exact result of the volume of an hypershere of radius $R$ in $D$ dimension is given by:
+\begin{equation}\label{eq:volumehypersphere}
+    V=\frac{\pi^{D/2}R^D}{\Gamma(D/2+1)}
+\end{equation}
+where $\Gamma$ is the gamma function.\\\\
+We use the following code
 \begin{lstlisting}[language=Python]
-Ndice = 100000
 Niter = 10000
-def random_event():
-    return np.sum([random.randint(1, 6) for _ in range(Niter)])/Niter
-
-random_outcome = [random_event() for _ in range(Ndice)]
-hist, bins = np.histogram(random_outcome, bins=50, density=True)
-bin_centers = (bins[:-1] + bins[1:]) / 2
-plt.plot(bin_centers, hist, label='Computed distribution')
-
-x = np.linspace(min(random_outcome)-0.1, max(random_outcome)+0.1, 1000)
-gaussian = norm.pdf(x, loc=3.5, scale=np.std(random_outcome))
-plt.plot(x, gaussian, label='Gaussian distribution',color='red', linestyle='--')
+z = np.random.rand(Niter, D)
+Nhint = 0
+for i in range(Niter):
+    if np.sum(z[i,:]**2) < 1:
+        Nhint += 1
+        
+V = (2*R)**D*Nhint/Niter
+Vth = np.pi**(D/2)*R**D/math.gamma(D/2+1)
+errAct = np.abs(V-Vth)
+errStat = np.sqrt((V-Vth)**2/Niter**2)
+\end{lstlisting}
+\begin{lstlisting}
+Using N: 10000 and D: 7
+Estimated volume of the unit hypersphere: 5.0304
+Exact volume of the unit hypershpere: 4.7247659703314016
+Actual error: 0.30563402966859865
+Statistical error: 3.0563402966859864e-05
 \end{lstlisting}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.9\linewidth]{images/Figure3.png}
-    \caption{Distribution of the average value of multiple dice roll}
-    \label{fig:3}
+    \includegraphics[width=.7\linewidth]{images/Figure3.2.png}
+    \caption{log-log plot of the statistical error}
+    \label{fig:3.2}
 \end{figure}
-As we can see as we use a large number of dice the resulting distribution is pretty similar to the Gaussian distribution expected by the Central Limit Theorem
-\clearpage
-\section{Error estimation}
-We wanna now calculate the average value and estimate the statistical error, associated with such estimation. Assume that single-die throwing is used to estimate the mean value and the variance
-\begin{equation}
-    \mu=\langle x\rangle\approx\frac{\sum_{i=1}^{N_{iter}}{x_i}}{N_{iter}}
-\end{equation}
-\begin{equation}
-    \sigma^2=\langle x^2\rangle-\langle x \rangle^2\approx\frac{\sum_{i=1}^{N_{iter}}{x_i^2}}{N_{iter}}-\left(\frac{\sum_{i=1}^{N_{iter}}{x_i}}{N_{iter}}\right)^2
-\end{equation}
-Calculate the mean value by throwing the dice $N_{iter}=10$ and $N_{iter}=100$ times and compare the estimation of the mean value and the variance with the exact values, given by
-\begin{equation*}
-    \mu=\langle x\rangle=\frac{\sum_{\ell=1}^{6}{\ell}}{6}=3.5\quad \sigma^2=\frac{\sum_{\ell=1}^{6}{\ell^2}}{6}-\left(\frac{\sum_{\ell=1}^{6}{\ell}}{6}\right)^2=\frac{35}{12}\approxeq2.92
-\end{equation*}
-Using the following code
-\begin{lstlisting}[language=Python]
-Niter = 10
-dice_rolls = np.array([random.randint(1, 6) for _ in range(Niter)])
-
-u = np.sum(dice_rolls)/Niter
-var = np.sum(dice_rolls**2)/Niter-np.mean(dice_rolls)**2
-\end{lstlisting}
-we obatin the results, which are reported in \autoref{tab:1}
-\begin{table}[H]
+\begin{figure}[H]
     \centering
-    \begin{tabular}{|l|c|c|c|}
-        \hline $N_{iter}$  & $\mu$ & $\sigma^2$ &  $\varepsilon $\\\hline\hline
-        10 &  &  & \\\hline
-        100 &  &  & \\\hline
-        1000 &  &  & \\\hline
-    \end{tabular}
-    \caption{Results of error estimation}
-    \label{tab:1}
-\end{table}
-
+    \includegraphics[width=.7\linewidth]{images/Figure3.1.png}
+    \caption{log-log plot of the actual error}
+    \label{fig:3.1}
+\end{figure}
+As we can observe, for low number of iterations the error is large.
+\subsection{Hypersphere and hypercube}
+The ratio between the volume of a sphere of diameter $2R$ and a cube with side length $2R$ in $D$ dimensions can be calculated as follows:
+\begin{itemize}
+    \item The volume of an hypersphere in $D$ dimension of radius $R$ is given by \autoref{eq:volumehypersphere}
+    \item The volume of a hypercube in $D$ dimension with side $R$ is $R^D$
+\end{itemize}
+So we can compute the ratio
+\begin{equation}
+    \frac{\frac{\pi^{D/2}}{\Gamma(D/2+1)}(2R)^D}{(2R)^D}
+\end{equation}
+simplifying this, we find:
+\begin{equation}
+     \frac{\pi^{D/2}}{\Gamma(D/2+1)}
+\end{equation}
+It's worth noting that as $D$ increases, this ratio tends to zero rapidly, indicating that the hypersphere occupies a negligible portion of the hypercube's volume in higher dimensions.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.5\linewidth]{images/Figure4.png}
+    \caption{plot of the ratio varying D}
+    \label{fig:4}
+\end{figure}
 \end{document}
