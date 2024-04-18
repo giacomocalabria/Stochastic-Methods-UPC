@@ -12,9 +12,9 @@ def potential(N, R):
   return E
 
 # Leggi i dati dai file
-risultati_data = np.loadtxt("risultati_20240418-140848.txt")
-R = np.loadtxt("configurazione_20240418-140848.txt")
-parametri_data = np.loadtxt("parametri_20240418-140848.txt")
+risultati_data = np.loadtxt("risultati_20240418-144510.txt")
+R = np.loadtxt("configurazione_20240418-144510.txt")
+parametri_data = np.loadtxt("parametri_20240418-144510.txt")
 
 # Estrai i dati dall'array parametri_data
 N, T0, Tf, dt, steps_per_T, cooling_rate, count, E_min = parametri_data[0:8]
