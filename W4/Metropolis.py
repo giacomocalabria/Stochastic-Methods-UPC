@@ -54,11 +54,11 @@ def MoveAllParticles(N,R,T,dt):
         return R
 
 # Parametri di simulazione
-N = 26   # Numero di particelle
+N = 5   # Numero di particelle
 T0 = 10  # Temperatura iniziale
 Tf = 0.01  # Temperatura finale
-dt = 0.5  # Passo temporale
-steps_per_T = 1000  # Numero di passi per ogni temperatura
+dt = 0.4  # Passo temporale
+steps_per_T = 1000 # Numero di passi per ogni temperatura
 cooling_rate = 0.995  # Tasso di raffreddamento
 count = math.ceil(math.log(Tf / T0) / math.log(cooling_rate))
 
@@ -90,7 +90,7 @@ with tqdm(total=count) as pbar:
       for _ in range(steps_per_T):
         R = MoveOneParticle(N, R, T, dt)
 
-      for _ in range(100):
+      for _ in range(steps_per_T):
         R = MoveAllParticles(N, R, T, dt)
 
       T *= cooling_rate
@@ -110,6 +110,10 @@ print("Tempo di esecuzione:", Tend - Tstart)
 # Stampa dell'energia potenziale minima
 E_min = potential(N, R)
 print("Energia potenziale minima:", E_min)
+
+# Calcolo energia media delle ultime 100 configurazioni
+E_avg = np.mean(E[-100:])
+print("Energia potenziale media delle ultime 100 configurazioni:", E_avg)
 
 # Creazione della cartella se non esiste già
 output_folder = "Outputs"
@@ -136,7 +140,6 @@ color = 'tab:blue'
 ax2.set_ylabel('Temperature', color=color)
 ax2.plot(Temp, color=color)
 ax2.tick_params(axis='y', labelcolor=color)
-plt.show()
 
 # Visualizzazione della configurazione ottimale
 plt.figure()
@@ -144,4 +147,5 @@ plt.scatter(R[:,0], R[:,1])
 plt.title("Optimal configuration of N = " + str(N) + " particles")
 plt.xlabel("x")
 plt.ylabel("y")
+plt.grid()
 plt.show()

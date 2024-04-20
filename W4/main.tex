@@ -41,7 +41,6 @@
     showtabs=false,                  
     tabsize=2
 }
-
 \lstset{style=mystyle}
 
 \title{\textbf{Metropolis Algorithm}}
@@ -49,7 +48,6 @@
 \date{}
 
 \begin{document}
-
 \maketitle
 
 \section*{Introduction}
@@ -102,11 +100,30 @@ def MaxBoltz(dE, T):
 \section{Metropolis algorithm}
 Now we describe briefly the steps of the Metropolis algorithm; starting from a random configuration of $N$ charges.
 \begin{enumerate}
-    \item Select a charges
-    \item Do a random displacement
-    \item Decide if it has to be accepted or not
+    \item Generate a new/trial position $R_i'$, from the present one $R_i$
+    \item Populate the weight $w = p(R_i')/p(R_i)$
+    \item Decide the acceptance of the new proposal position, based on the likelihood:\\
+    generate a random uniform number $0<u<1$
+    \begin{enumerate}
+        \item If $int(w+u)>0$ then is \textbf{accepted} and move to the new position $R_{i+1}=R_i'$
+        \item If $int(w+u)=0$ then is \textbf{rejected} and stay in the actual position $R_{i+1}=R_i$
+    \end{enumerate}
+    \item Repeat
 \end{enumerate}
-
+We deploy both Local and Global move of the charges. 
+\begin{itemize}
+    \item Local move: a charges is selected randomly to be moved by a random displacement.
+    \item Global move: involves all charges, are moved by a random displacement.
+\end{itemize}
+The new trail configuration is accepted or rejected based on Metropolis criterion. Also each trail configuration is always accepted if the potential energy is lower than the previous configuration.\\\\
+The amplitude of the displacement $\Delta t$ is selected in order to obtain an acceptance ratio close to 50\%. The displacement is done as:
+\begin{equation}
+    \begin{cases}
+        x'=x+\xi_x&\xi_x=(u_x-1/2)\Delta t\\
+        y'=y+\xi_y&\xi_y=(u_y-1/2)\Delta t
+    \end{cases}
+\end{equation}
+with $0<u<1$ being from a uniformly distributed random variable.
 \begin{lstlisting}[language=Python]
 def MoveOneParticle(N,R,T,dt):
     R_new = R.copy()
@@ -126,6 +143,7 @@ def MoveOneParticle(N,R,T,dt):
       else:
         return R
 \end{lstlisting}
+\clearpage
 \begin{lstlisting}[language=Python]
 def MoveAllParticles(N,R,T,dt):
     R_new = R.copy()
@@ -144,12 +162,21 @@ def MoveAllParticles(N,R,T,dt):
       else:
         return R
 \end{lstlisting}
+Monte Carlo with annealing procedure, on each step the temperature is lowered by a tiny fraction at each iteration $T'=T\cdot\delta_T$.\\\\The annealing procedure is repeated in a number of times in order to obtain the optimal configuration at the lowest energy.
 \begin{lstlisting}[language=Python]
+N = 5   # Total number of charges
+T0 = 10  # Starting temperature
+Tf = 0.01  # Final temperature
+dt = 0.5  # Displacement amplitude
+steps_per_T = 10000
+cooling_rate = 0.995
+count = math.ceil(math.log(Tf / T0) / math.log(cooling_rate))
+
 while T > Tf:
   pbar.update()
-  for _ in range(1000):
+  for _ in range(steps_per_T):
     R = MoveOneParticle(N, R, T, dt)
-  for _ in range(100):
+  for _ in range(steps_per_T):
     R = MoveAllParticles(N, R, T, dt)
   T *= cooling_rate
   Temp[i] = T
@@ -157,8 +184,6 @@ while T > Tf:
   i += 1
 \end{lstlisting}
 \clearpage
-
-
 \section{Results - \textit{N=5}}
 We simulate a system of $N=5$ charges with the following parameters:
 \begin{itemize}
@@ -248,9 +273,10 @@ In the \autoref{fig:Figure1.N26.png} we have plotted the energy dependence durin
     \caption{}
     \label{fig:Figure2.N26.png}
 \end{figure}
-\noindent We can  appreciate that the charges are arranged in a double-shell configuration centred at $(0,0)$. Together, they form a more complex yet still regular structure.\\\\We have computed the average value of the last 100 iteration, the value of the potential energy at the optimal configuration is: $\Tilde{E}_{opt}=254.1912$. The absolute minimum energy value found in an iteration is $E_{min}=254.0370$.\\\\
+\noindent We can  appreciate that the charges are arranged in a double-shell configuration centred at $(0,0)$. As expected, at the centre, there are 3 charges, while the first shell contains 9 charges, and the second shell contains 14 charges. Together, they form a more complex yet still regular structure.\\\\We have computed the average value of the last 100 iteration, the value of the potential energy at the optimal configuration is: $\Tilde{E}_{opt}=254.1798$. The absolute minimum energy value found in an iteration is $E_{min}=254.1061$.
+\clearpage
 \section{Conclusions}
-Finally we compare the obtained results with the one provided in the literature.
+We compare in \autoref{tab:1} the obtained results with the one provided in the literature.
 \begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|}
@@ -259,9 +285,30 @@ Finally we compare the obtained results with the one provided in the literature.
         &$E/N$ & $E/N$ \\\hline\hline
         5 & 2.3491 & 2.33845 \\\hline
         20 & 7.9622 & 7.94961 \\\hline
-        26 & 9.7766 & 9.76273 \\\hline
+        26 & 9.7761 & 9.76273 \\\hline
     \end{tabular}
     \caption{Comparing obtained results with reference data}
     \label{tab:1}
+\end{table}
+\noindent In \autoref{fig:FigureOCCShells.png} we illustrates the average distance of particles within each defined region (shell) for different configurations. We report the occupation of each shell in \autoref{tab:2}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.495\linewidth]{images/Figure_5.png}
+    \includegraphics[width=0.495\linewidth]{images/Figure_20.png}
+    \includegraphics[width=0.495\linewidth]{images/Figure_26.png}
+    \caption{Shell occupation for different configurations}
+    \label{fig:FigureOCCShells.png}
+\end{figure}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        $N$& $N_1$ & $N_2$ & $N_3$ \\\hline\hline
+        5 & 5 & . & . \\\hline
+        20 & 1 & 7 & 12\\\hline
+        26 & 3 & 9 & 14 \\\hline
+    \end{tabular}
+    \caption{Occupation of shells for different configurations}
+    \label{tab:2}
 \end{table}
 \end{document}
